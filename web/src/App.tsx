@@ -3,6 +3,9 @@ import { AuthProvider } from './features/auth/AuthContext'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireRole } from './features/auth/RequireRole'
 import { HomePage } from './features/home/HomePage'
+import { DocumentsPage } from './features/portal/DocumentsPage'
+import { OnboardingPage } from './features/portal/OnboardingPage'
+import { OrdersPage } from './features/portal/OrdersPage'
 import { DashboardPage } from './features/kpi/DashboardPage'
 import { HqInvoicesPage } from './features/royalty/HqInvoicesPage'
 import { HqRoyaltyRunsPage } from './features/royalty/HqRoyaltyRunsPage'
@@ -19,6 +22,8 @@ const HQ_NAV = [
   { to: '/hq/invoices', label: 'Invoices & aging' },
   { to: '/hq/variance', label: 'Variance' },
   { to: '/hq/supply', label: 'Traceability' },
+  { to: '/hq/orders', label: 'Orders' },
+  { to: '/hq/onboarding', label: 'Onboarding' },
 ]
 
 const OPERATOR_NAV = [
@@ -26,6 +31,9 @@ const OPERATOR_NAV = [
   { to: '/operator/reports', label: 'Monthly reports' },
   { to: '/operator/statements', label: 'Statements & invoices' },
   { to: '/operator/supply', label: 'Supply' },
+  { to: '/operator/orders', label: 'Orders' },
+  { to: '/operator/onboarding', label: 'Onboarding' },
+  { to: '/operator/documents', label: 'Documents' },
 ]
 
 function App() {
@@ -41,6 +49,8 @@ function App() {
             <Route path="/hq/invoices" element={<HqInvoicesPage />} />
             <Route path="/hq/variance" element={<VariancePage />} />
             <Route path="/hq/supply" element={<SupplyPage />} />
+            <Route path="/hq/orders" element={<OrdersPage />} />
+            <Route path="/hq/onboarding" element={<OnboardingPage />} />
           </Route>
         </Route>
 
@@ -53,6 +63,9 @@ function App() {
               element={<OperatorStatementsPage />}
             />
             <Route path="/operator/supply" element={<SupplyPage />} />
+            <Route path="/operator/orders" element={<OrdersPage />} />
+            <Route path="/operator/onboarding" element={<OnboardingPage />} />
+            <Route path="/operator/documents" element={<DocumentsPage />} />
           </Route>
         </Route>
 

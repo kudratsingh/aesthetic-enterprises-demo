@@ -134,6 +134,113 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/portal/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Documents */
+        get: operations["list_documents_api_v1_portal_documents_get"];
+        put?: never;
+        /** Create Document */
+        post: operations["create_document_api_v1_portal_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/onboarding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Onboarding */
+        get: operations["list_onboarding_api_v1_portal_onboarding_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/onboarding/{task_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Onboarding Task */
+        post: operations["complete_onboarding_task_api_v1_portal_onboarding__task_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Orders */
+        get: operations["list_orders_api_v1_portal_orders_get"];
+        put?: never;
+        /** Create Order */
+        post: operations["create_order_api_v1_portal_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/orders/{order_id}/fulfill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Fulfill Order
+         * @description HQ fulfillment writes real shipments into the supply ledger (ADR-0003).
+         */
+        post: operations["fulfill_order_api_v1_portal_orders__order_id__fulfill_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/orders/{order_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Order */
+        post: operations["submit_order_api_v1_portal_orders__order_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/royalty/invoices": {
         parameters: {
             query?: never;
@@ -615,6 +722,44 @@ export interface components {
             /** Threshold */
             threshold: number;
         };
+        /** DocumentCreate */
+        DocumentCreate: {
+            /** Body */
+            body: string;
+            /**
+             * Category
+             * @default other
+             * @enum {string}
+             */
+            category: "license_agreement" | "playbook" | "policy" | "other";
+            /** Title */
+            title: string;
+        };
+        /** DocumentOut */
+        DocumentOut: {
+            /** Body */
+            body: string;
+            /** Category */
+            category: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Org Id */
+            org_id: string;
+            /** Org Name */
+            org_name: string;
+            /** Title */
+            title: string;
+        };
+        /** FulfillRequest */
+        FulfillRequest: {
+            /** Assignments */
+            assignments: components["schemas"]["LotAssignment"][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -742,6 +887,13 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** LotAssignment */
+        LotAssignment: {
+            /** Lot Id */
+            lot_id: string;
+            /** Product Id */
+            product_id: string;
+        };
         /** LotOut */
         LotOut: {
             /**
@@ -799,6 +951,72 @@ export interface components {
             on_hand: number;
             /** Product Name */
             product_name: string;
+        };
+        /** OnboardingTaskOut */
+        OnboardingTaskOut: {
+            /** Category */
+            category: string;
+            /** Completed At */
+            completed_at: string | null;
+            /** Due Offset Days */
+            due_offset_days: number;
+            /** Id */
+            id: string;
+            /** Org Id */
+            org_id: string;
+            /** Org Name */
+            org_name: string;
+            /** Sort Order */
+            sort_order: number;
+            /** Title */
+            title: string;
+        };
+        /** OrderCreate */
+        OrderCreate: {
+            /** Lines */
+            lines: components["schemas"]["OrderLineIn"][];
+            /** Location Id */
+            location_id: string;
+        };
+        /** OrderLineIn */
+        OrderLineIn: {
+            /** Product Id */
+            product_id: string;
+            /** Qty */
+            qty: number;
+        };
+        /** OrderLineOut */
+        OrderLineOut: {
+            /** Product Id */
+            product_id: string;
+            /** Product Name */
+            product_name: string;
+            /** Qty */
+            qty: number;
+        };
+        /** OrderOut */
+        OrderOut: {
+            /** Fulfilled At */
+            fulfilled_at: string | null;
+            /** Id */
+            id: string;
+            /** Lines */
+            lines: components["schemas"]["OrderLineOut"][];
+            /** Location Id */
+            location_id: string;
+            /** Location Name */
+            location_name: string;
+            /** Org Id */
+            org_id: string;
+            /** Org Name */
+            org_name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "submitted" | "fulfilled";
+            /** Submitted At */
+            submitted_at: string | null;
         };
         /** ProductOut */
         ProductOut: {
@@ -1311,6 +1529,231 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LocationOut"][];
+                };
+            };
+        };
+    };
+    list_documents_api_v1_portal_documents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"][];
+                };
+            };
+        };
+    };
+    create_document_api_v1_portal_documents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DocumentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_onboarding_api_v1_portal_onboarding_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingTaskOut"][];
+                };
+            };
+        };
+    };
+    complete_onboarding_task_api_v1_portal_onboarding__task_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_orders_api_v1_portal_orders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+        };
+    };
+    create_order_api_v1_portal_orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fulfill_order_api_v1_portal_orders__order_id__fulfill_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FulfillRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_order_api_v1_portal_orders__order_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
