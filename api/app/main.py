@@ -13,6 +13,7 @@ from app.core.logging import RequestIDMiddleware, configure_logging
 from app.db.engine import connected_role_bypasses_rls
 from app.routers import (
     auth,
+    collections,
     health,
     hello,
     ingest,
@@ -76,6 +77,7 @@ def create_app() -> FastAPI:
     app.include_router(ingest.router, prefix="/api/v1")
     app.include_router(locations.router, prefix="/api/v1")
     app.include_router(portal.router, prefix="/api/v1")
+    app.include_router(collections.router, prefix="/api/v1")
 
     @app.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:

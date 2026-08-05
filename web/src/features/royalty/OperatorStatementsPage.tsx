@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { fmtCents, fmtMonth } from '../../lib/format'
+import { useCollectInvoice } from '../collections/api'
 import {
   locationMaps,
   useInvoices,
@@ -12,6 +13,7 @@ export function OperatorStatementsPage() {
   const runs = useRuns()
   const locations = useLocations()
   const invoices = useInvoices()
+  const payNow = useCollectInvoice()
   const [selectedRun, setSelectedRun] = useState<string | null>(null)
 
   const runList = runs.data ?? []
@@ -110,6 +112,7 @@ export function OperatorStatementsPage() {
               <th className="num">Amount</th>
               <th>Due</th>
               <th>Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -125,10 +128,25 @@ export function OperatorStatementsPage() {
                       {inv.status}
                     </span>
                   </td>
+                  <td>
+                    {inv.status !== 'paid' && (
+                      <button
+                        disabled={payNow.isPending}
+                        onClick={() => payNow.mutate(inv.id)}
+                      >
+                        Pay now (mock)
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
           </tbody>
         </table>
+        {payNow.isError && <p className="bad">mock payment failed</p>}
+        <p className="hint">
+          Pay now (mock) settles the invoice through the mock payment provider —
+          checkout session, then a simulated provider callback.
+        </p>
       </section>
     </>
   )
