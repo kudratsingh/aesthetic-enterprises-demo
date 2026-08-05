@@ -16,7 +16,9 @@ services:
       - key: ENVIRONMENT
         value: prod
       - key: DATABASE_URL
-        sync: false # paste the Neon asyncpg URL in the dashboard — never committed
+        sync: false # the cnos_app (NOBYPASSRLS) Neon URL — never the owner role
+      - key: MIGRATIONS_DATABASE_URL
+        sync: false # the neondb_owner URL, used only for boot-time alembic DDL
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
