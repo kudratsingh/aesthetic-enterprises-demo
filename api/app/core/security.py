@@ -60,3 +60,14 @@ def get_current_user(
 
 
 CurrentUser = Annotated[TokenClaims, Depends(get_current_user)]
+
+
+def _require_hq(user: CurrentUser) -> TokenClaims:
+    """Route-level convenience gate. RLS remains the security boundary — this
+    exists to give clean 403s, not to protect data."""
+    if user.role != "hq_admin":
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "hq_admin role required")
+    return user
+
+
+HqUser = Annotated[TokenClaims, Depends(_require_hq)]

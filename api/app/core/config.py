@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173"]
     # Period boundaries are computed in this zone (no DST); storage is UTC. See PROJECT_CONTEXT §3.
     network_timezone: str = "America/Phoenix"
+    # R5: flag when reported net_base < expected_floor * threshold (assumption A2).
+    variance_threshold: float = 0.75
 
 
 @lru_cache

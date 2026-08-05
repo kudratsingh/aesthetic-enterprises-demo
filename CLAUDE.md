@@ -102,13 +102,13 @@ Monorepo, tooling (uv, ruff, mypy, pytest, Vite, ESLint), docker-compose Postgre
 ### Phase 1 — Schema, tenancy, auth, seed `merged`
 Alembic migrations for §2.4, RLS policies + tenancy dependency, JWT auth with seeded users (hq_admin, operator_a, operator_b, clinic_staff), deterministic seed (~20 locations, synthetic funnel + treatments, one deliberate underreporter). **Exit:** invariant tests 1, 5 pass; seed reset is one command.
 
-### Phase 2 — Royalty domain core `planned`
+### Phase 2 — Royalty domain core `merged`
 Services + endpoints: submit/attest revenue report (locks), run_royalty_period (idempotent, versioned), minimums, issue_invoices, aging query. **Exit:** invariants 2, 3, 4, 6 pass; full royalty cycle executable via API alone.
 
 ### Phase 3 — Web shell & royalty UI `in-progress`
 Auth flow, role-based shells, generated client. Operator: submit/attest month, view statements/invoices. HQ: run period, line items, invoices, aging. **Exit:** the two-minute demo's first half runs entirely in the browser.
 
-### Phase 4 — Dashboard, variance, traceability `planned`
+### Phase 4 — Dashboard, variance, traceability `in-progress`
 HQ KPI dashboard vs ramp targets; variance reconciliation view flagging the seeded underreporter with the math shown; lot receive/ship/administer UI + one-click recall query. **Exit:** the showpiece moments render from seed with zero manual setup.
 
 ### Phase 5 — Integration proof & demo hardening `planned`
