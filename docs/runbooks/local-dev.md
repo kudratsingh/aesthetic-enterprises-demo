@@ -16,12 +16,24 @@ to 127.0.0.1:8100 (see `web/vite.config.ts`), so there is no CORS in local dev.
 Settings load from environment / `api/.env` (`app/core/config.py`); defaults work
 out of the box. Template: `.env.example` at the repo root. Never commit `.env`.
 
-## Auth in Phase 0
+## Auth (Phase 1, ADR-0006)
 
-Real auth lands in Phase 1 (ADR-0006). Until then, `POST /api/v1/auth/dev-token`
-mints a signed JWT for any role — it is disabled when `ENVIRONMENT=prod`. From the
-CLI: `make token ROLE=hq_admin ORG=org-hq`, then
+`POST /api/v1/auth/login` with email + password returns a JWT whose claims
+(org, role) drive the RLS tenant context. Users come from the seed (see the
+seed section once Phase 1 PR B lands). For curl-level poking without a user row:
+`make token ROLE=hq_admin ORG=<org-uuid>`, then
 `curl -H "Authorization: Bearer <token>" 127.0.0.1:8100/api/v1/hello`.
+
+## Database roles (ADR-0002)
+
+Two local roles, created automatically on a fresh docker volume:
+
+- `cnos` — superuser, **DDL only** (`make migrate` uses it via
+  `MIGRATIONS_DATABASE_URL`). Superusers bypass RLS, so the app never connects as it.
+- `cnos_app` — non-superuser the app and tests connect as; RLS applies.
+
+**One-time note:** if your db volume predates Phase 1, run `make db-nuke` once —
+the role-creation script only runs on a fresh volume.
 
 ## Tests, lint, client generation
 
@@ -37,8 +49,8 @@ make openapi    # after changing any endpoint/schema: regenerate web/src/api/sch
 ## Database
 
 - Reset: `make db-nuke && make db-up` (all local data is disposable synthetic seed).
-- Migrations: `cd api && uv run alembic upgrade head`. CI replays all migrations from
-  an empty database on every PR; merged migrations are immutable.
+- Migrations: `make migrate` (runs alembic as the admin role). CI replays all
+  migrations from an empty database on every PR; merged migrations are immutable.
 
 ## Gotchas
 

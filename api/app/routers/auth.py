@@ -1,23 +1,18 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from app.core.config import Settings, get_settings
-from app.core.security import TokenClaims, mint_token
-from app.schemas.auth import DevTokenRequest, TokenResponse
+from app.schemas.auth import LoginRequest, TokenResponse
+from app.services.auth import authenticate
 
 router = APIRouter(tags=["auth"])
 
 
-@router.post("/auth/dev-token")
-async def dev_token(
-    body: DevTokenRequest, settings: Annotated[Settings, Depends(get_settings)]
+@router.post("/auth/login")
+async def login(
+    body: LoginRequest, settings: Annotated[Settings, Depends(get_settings)]
 ) -> TokenResponse:
-    """Phase 0 stub: mints a signed JWT for any requested role, dev/test environments only.
-
-    Replaced in Phase 1 by real credential auth against seeded users (ADR-0006).
-    """
-    if settings.environment == "prod":
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "not available")
-    claims = TokenClaims(sub=body.sub, org_id=body.org_id, role=body.role)
-    return TokenResponse(access_token=mint_token(claims, settings))
+    """Credential login against seeded users (ADR-0006). Replaces the Phase 0
+    dev-token stub. Claims (sub, org_id, role) drive the RLS tenant context."""
+    return TokenResponse(access_token=await authenticate(body.email, body.password, settings))

@@ -1,7 +1,9 @@
+import bcrypt
 from httpx import AsyncClient
 
 from app.core.config import Settings
 from app.core.security import TokenClaims, decode_token, mint_token
+from app.services.auth import hash_password
 
 
 async def test_hello_without_token_is_401(client: AsyncClient) -> None:
@@ -19,13 +21,8 @@ def test_token_mint_decode_roundtrip(settings: Settings) -> None:
     assert decode_token(mint_token(claims, settings), settings) == claims
 
 
-async def test_dev_token_endpoint_mints_valid_token(
-    client: AsyncClient, settings: Settings
-) -> None:
-    resp = await client.post("/api/v1/auth/dev-token", json={"role": "operator", "org_id": "org-a"})
-    assert resp.status_code == 200
-    body = resp.json()
-    assert body["token_type"] == "bearer"
-    claims = decode_token(body["access_token"], settings)
-    assert claims.role == "operator"
-    assert claims.org_id == "org-a"
+def test_password_hash_verifies_and_salts() -> None:
+    h1, h2 = hash_password("s3cret"), hash_password("s3cret")
+    assert h1 != h2  # salted
+    assert bcrypt.checkpw(b"s3cret", h1.encode())
+    assert not bcrypt.checkpw(b"wrong", h1.encode())

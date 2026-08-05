@@ -38,6 +38,27 @@
   background: light-dark(#e2e5e9, #333842);
 }
 
+.login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.login input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid light-dark(#c9cdd3, #3a3f48);
+  background: light-dark(#ffffff, #16181d);
+  color: inherit;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
 .good {
   color: light-dark(#116632, #57c778);
 }
