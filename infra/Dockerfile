@@ -16,4 +16,5 @@ ENV PATH="/srv/api/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
 EXPOSE 8080
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Shell form: Render injects PORT; migrations replay is idempotent (alembic upgrade head).
+CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}
