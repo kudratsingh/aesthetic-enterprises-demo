@@ -16,6 +16,30 @@ merge; CI is the gate in front of them.
    - result shape:
      `postgresql+asyncpg://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?ssl=require`
 
+### 1b. Neon app role (REQUIRED — tenancy depends on it)
+
+Neon's `neondb_owner` has the `BYPASSRLS` attribute, which silently disables
+row-level security (ADR-0002 amendment). The app must connect as an
+unprivileged role; the owner URL is used only for DDL/seed:
+
+```sql
+-- as neondb_owner:
+CREATE ROLE cnos_app LOGIN PASSWORD '<generate>' NOSUPERUSER NOBYPASSRLS;
+GRANT CONNECT ON DATABASE neondb TO cnos_app;
+GRANT USAGE ON SCHEMA public TO cnos_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO cnos_app;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO cnos_app;
+```
+
+Re-run the two GRANT … ALL statements after seeding or migrating from the owner
+role if new tables appear outside a migration (migrations grant conditionally
+themselves). The API's startup guard refuses to boot in prod if its role can
+bypass RLS.
+
+Render env vars that result:
+- `DATABASE_URL` → the **cnos_app** URL (asyncpg scheme, `?ssl=require`)
+- `MIGRATIONS_DATABASE_URL` → the **neondb_owner** URL (boot-time alembic)
+
 ### 2. Render (API)
 
 1. https://render.com → **New → Blueprint** → connect
