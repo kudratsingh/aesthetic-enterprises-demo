@@ -3,7 +3,7 @@ COMPOSE = docker compose -f infra/docker-compose.yml
 # RLS applies (ADR-0002).
 ADMIN_DB_URL = postgresql+asyncpg://cnos:cnos@localhost:5433/cnos
 
-.PHONY: dev dev-api dev-web db-up db-down db-nuke migrate test test-api test-web lint openapi token
+.PHONY: dev dev-api dev-web db-up db-down db-nuke migrate seed demo-reset test test-api test-web lint openapi token
 
 ## dev: start Postgres (migrated), API (:8100), and web (:5173) together
 dev: db-up migrate
@@ -31,7 +31,7 @@ migrate: db-up
 test: test-api test-web
 
 test-api: db-up migrate
-	cd api && uv run pytest
+	cd api && MIGRATIONS_DATABASE_URL=$(ADMIN_DB_URL) uv run pytest
 
 test-web:
 	cd web && npm run typecheck
@@ -39,6 +39,13 @@ test-web:
 lint:
 	cd api && uv run ruff format --check . && uv run ruff check . && uv run mypy
 	cd web && npm run lint && npm run format:check
+
+## seed: rebuild the deterministic demo world (destructive: truncates all data)
+seed: migrate
+	cd api && MIGRATIONS_DATABASE_URL=$(ADMIN_DB_URL) uv run python -m scripts.seed
+
+## demo-reset: alias for the rehearsed-demo reset (Phase 5 exit criterion)
+demo-reset: seed
 
 ## openapi: re-export the spec and regenerate the typed web client (commit the result)
 openapi:
