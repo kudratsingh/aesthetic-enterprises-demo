@@ -576,7 +576,33 @@ NET_TERMS_DAYS = 30  # A5: invoices are net-30
 
 
 def _invoice_out(invoice: Invoice) -> InvoiceOut:
-    return InvoiceOut.model_validate(invoice, from_attributes=True)
+    out = InvoiceOut.model_validate(invoice, from_attributes=True)
+    # Overdue is derived at read time: storage keeps 'issued' until payment, so
+    # nothing has to sweep statuses on a clock. Paid/superseded never regress.
+    if out.status == "issued" and out.due_date < utcnow().date():
+        out.status = "overdue"
+    return out
+
+
+async def mark_invoice_paid(
+    session: AsyncSession, actor: TokenClaims, invoice_id: uuid.UUID
+) -> InvoiceOut:
+    """Record payment manually (Phase 6 replaces this with Stripe webhooks).
+
+    Idempotent: paying a paid invoice returns it unchanged. Superseded invoices
+    can't be paid — the live successor carries the balance (invariant 6).
+    HQ only.
+    """
+    _require_role(actor, "hq_admin")
+    invoice = await session.get(Invoice, invoice_id)
+    if invoice is None:
+        raise NotFoundError("invoice not found")
+    if invoice.superseded_by is not None:
+        raise InvoiceStateError("superseded invoices cannot be paid; pay the live successor")
+    if invoice.status != "paid":
+        invoice.status = "paid"
+        await session.flush()
+    return _invoice_out(invoice)
 
 
 async def issue_invoices(

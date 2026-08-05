@@ -98,6 +98,11 @@ export function HqRoyaltyRunsPage() {
           ))}
         </select>
 
+        {activeRunId === null && (
+          <p className="hint">
+            Pick a run above, or run a period to see its line items.
+          </p>
+        )}
         <table className="tbl">
           <thead>
             <tr>

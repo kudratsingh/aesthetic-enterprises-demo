@@ -1,11 +1,20 @@
 import { fmtCents } from '../../lib/format'
-import { locationMaps, useAging, useInvoices, useLocations } from './api'
+import {
+  locationMaps,
+  useAging,
+  useInvoices,
+  useLocations,
+  usePayInvoice,
+} from './api'
 
 export function HqInvoicesPage() {
   const invoices = useInvoices()
   const aging = useAging()
   const locations = useLocations()
+  const pay = usePayInvoice()
   const { orgName } = locationMaps(locations.data)
+
+  const live = (invoices.data ?? []).filter((inv) => inv.superseded_by === null)
 
   return (
     <>
@@ -22,24 +31,35 @@ export function HqInvoicesPage() {
             </div>
           ))}
         </div>
+        {aging.isSuccess &&
+          aging.data.buckets.every((b) => b.invoice_count === 0) && (
+            <p className="good">Nothing outstanding — every invoice is paid.</p>
+          )}
       </section>
 
       <section>
         <h2>All invoices</h2>
-        <table className="tbl">
-          <thead>
-            <tr>
-              <th>Org</th>
-              <th className="num">Amount</th>
-              <th>Issued</th>
-              <th>Due</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(invoices.data ?? [])
-              .filter((inv) => inv.superseded_by === null)
-              .map((inv) => (
+        {invoices.isPending && <p className="hint">loading…</p>}
+        {invoices.isSuccess && live.length === 0 && (
+          <p className="hint">
+            No invoices yet — run a royalty period and issue invoices from{' '}
+            <strong>Royalty runs</strong>.
+          </p>
+        )}
+        {live.length > 0 && (
+          <table className="tbl">
+            <thead>
+              <tr>
+                <th>Org</th>
+                <th className="num">Amount</th>
+                <th>Issued</th>
+                <th>Due</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {live.map((inv) => (
                 <tr key={inv.id}>
                   <td>{orgName.get(inv.org_id) ?? inv.org_id.slice(0, 8)}</td>
                   <td className="num">{fmtCents(inv.amount_due_cents)}</td>
@@ -50,10 +70,22 @@ export function HqInvoicesPage() {
                       {inv.status}
                     </span>
                   </td>
+                  <td>
+                    {inv.status !== 'paid' && (
+                      <button
+                        disabled={pay.isPending}
+                        onClick={() => pay.mutate(inv.id)}
+                      >
+                        Mark paid
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        )}
+        {pay.isError && <p className="bad">payment recording failed</p>}
       </section>
     </>
   )

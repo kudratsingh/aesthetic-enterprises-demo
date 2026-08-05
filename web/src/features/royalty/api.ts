@@ -191,6 +191,28 @@ export function useIssueInvoices() {
   })
 }
 
+export function usePayInvoice() {
+  const headers = useAuthHeaders()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (invoiceId: string): Promise<Invoice> => {
+      const { data, error } = await api.POST(
+        '/api/v1/royalty/invoices/{invoice_id}/pay',
+        {
+          headers,
+          params: { path: { invoice_id: invoiceId } },
+        },
+      )
+      if (error !== undefined || data === undefined) fail('recording payment')
+      return data
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['invoices'] })
+      void qc.invalidateQueries({ queryKey: ['aging'] })
+    },
+  })
+}
+
 export function useAging() {
   const headers = useAuthHeaders()
   return useQuery({

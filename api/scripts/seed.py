@@ -405,6 +405,82 @@ TRUNCATE_ORDER = [
 ]
 
 
+HISTORY_PERIODS = PERIODS[:-1]  # Feb..Jun get runs+invoices; July stays unrun
+# for the live "Run royalty period" demo beat.
+
+# Fraction of each period's invoices already paid — the remainder produces a
+# realistic aging spread (older unpaid invoices land in deeper buckets).
+PAID_FRACTION = {2: 1.0, 3: 1.0, 4: 0.85, 5: 0.6, 6: 0.3}
+
+
+async def _build_royalty_history(engine: AsyncEngine) -> dict[str, int]:
+    """Run the real royalty services for past periods, then backdate.
+
+    Uses the actual run/issue code paths (invariants included) under an
+    hq_admin RLS context, so seeded history is exactly what the demo produces
+    live. Invoices are then backdated to their period (issued the 5th of the
+    following month, net-30) and a deterministic subset marked paid.
+    """
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.core.security import TokenClaims
+    from app.services import royalty as royalty_service
+
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    hq = TokenClaims(sub="seed-history", org_id="", role="hq_admin")
+    set_ctx = text(
+        "SELECT set_config('app.org_id', '', true), set_config('app.role', 'hq_admin', true)"
+    )
+
+    runs = 0
+    invoices = 0
+    for period in HISTORY_PERIODS:
+        async with factory() as session, session.begin():
+            await session.execute(set_ctx)
+            run = await royalty_service.run_royalty_period(session, hq, period)
+            issued = await royalty_service.issue_invoices(session, hq, UUID(str(run.id)))
+            runs += 1
+            invoices += len(issued.invoices)
+
+    async with engine.begin() as conn:
+        await conn.execute(
+            text(
+                """
+                UPDATE invoices i
+                   SET issued_at = (r.period + interval '1 month' + interval '4 days'),
+                       due_date = (r.period + interval '1 month' + interval '34 days')::date
+                  FROM royalty_runs r
+                 WHERE r.id = i.run_id
+                """
+            )
+        )
+        for period in HISTORY_PERIODS:
+            fraction = PAID_FRACTION[period.month]
+            await conn.execute(
+                text(
+                    """
+                    WITH ranked AS (
+                        SELECT i.id,
+                               row_number() OVER (ORDER BY o.name) AS rn,
+                               count(*) OVER () AS total
+                          FROM invoices i
+                          JOIN royalty_runs r ON r.id = i.run_id
+                          JOIN orgs o ON o.id = i.org_id
+                         WHERE r.period = :period
+                    )
+                    UPDATE invoices
+                       SET status = 'paid'
+                     WHERE id IN (
+                        SELECT id FROM ranked
+                         WHERE rn <= round(total * CAST(:fraction AS float8))
+                     )
+                    """
+                ),
+                {"period": period, "fraction": fraction},
+            )
+    return {"royalty_runs": runs, "invoices": invoices}
+
+
 async def run_seed(engine: AsyncEngine) -> dict[str, int]:
     world = build_world()
     counts: dict[str, int] = {}
@@ -417,6 +493,7 @@ async def run_seed(engine: AsyncEngine) -> dict[str, int]:
             if rows:
                 await conn.execute(insert(model), rows)
             counts[table] = len(rows)
+    counts.update(await _build_royalty_history(engine))
     await engine.dispose()
     return counts
 

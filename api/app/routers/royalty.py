@@ -124,3 +124,11 @@ async def invoice_aging(
 ) -> AgingOut:
     """Unpaid live invoices bucketed 0-30 / 31-60 / 61-90 / 90+ days (HQ)."""
     return await royalty.invoice_aging(session, user, as_of)
+
+
+@router.post("/invoices/{invoice_id}/pay")
+async def pay_invoice(
+    invoice_id: uuid.UUID, user: CurrentUser, session: TenantSession
+) -> InvoiceOut:
+    """Record payment manually (HQ). Stripe replaces this in Phase 6."""
+    return await royalty.mark_invoice_paid(session, user, invoice_id)
