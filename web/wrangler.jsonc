@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers static-assets deploy (the current successor to classic
+  // Pages). `npx wrangler deploy` publishes web/dist as a static SPA — no worker
+  // script. See docs/runbooks/deploy.md §3.
+  "name": "clinic-network-os",
+  "compatibility_date": "2026-08-05",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+  },
+}

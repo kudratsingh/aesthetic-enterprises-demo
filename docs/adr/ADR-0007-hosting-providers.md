@@ -37,4 +37,12 @@ surface for a solo project.
   endpoint can drive the walking-skeleton demo (all data is synthetic). Phase 1
   (ADR-0006 real auth) flips it to `prod`, which hard-disables that endpoint.
 - Web↔API is cross-origin in production, so `CORS_ORIGINS` must contain the
-  Pages URL; local dev stays same-origin via the Vite proxy.
+  deployed web origin; local dev stays same-origin via the Vite proxy.
+
+## Amendment (2026-08-05)
+
+Cloudflare's dashboard now provisions Git-connected static sites as **Workers
+with static assets** rather than classic Pages projects — same platform, same
+free tier, same push-to-deploy; the deploy step is `npx wrangler deploy` driven
+by `web/wrangler.jsonc`, and the URL is `*.workers.dev` instead of `*.pages.dev`.
+The decision (Cloudflare for static hosting) is unchanged.
