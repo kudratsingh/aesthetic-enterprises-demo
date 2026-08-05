@@ -1,4 +1,5 @@
 from app.db.models.base import Base
+from app.db.models.collections import Payment
 from app.db.models.funnel import Consult, Lead, Sale, Treatment
 from app.db.models.identity import LicenseAgreement, Location, Org, User
 from app.db.models.portal import OnboardingTask, PortalDocument, ProductOrder, ProductOrderLine
@@ -24,6 +25,7 @@ __all__ = [
     "Lot",
     "OnboardingTask",
     "Org",
+    "Payment",
     "PortalDocument",
     "Product",
     "ProductOrder",

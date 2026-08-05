@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     network_timezone: str = "America/Phoenix"
     # R5: flag when reported net_base < expected_floor * threshold (assumption A2).
     variance_threshold: float = 0.75
+    # Phase 6 collections: which PaymentProvider implementation serves checkout
+    # (ADR-0010). "mock" is the only implementation until a real Stripe account
+    # exists; a real one slots in behind the same Protocol seam.
+    payment_provider: str = "mock"
+    # HMAC shared secret for /webhooks/payments (ADR-0010). None → endpoint answers 503.
+    payment_webhook_secret: str | None = None
 
 
 @lru_cache
