@@ -40,8 +40,21 @@ async def network_kpis(session: AsyncSession, tz: str, months: int) -> list[Netw
             text(
                 """
                 WITH months AS (
-                    SELECT DISTINCT date_trunc('month', created_at AT TIME ZONE :tz)::date AS p
+                    -- The month spine unions every source: a period with reports
+                    -- but no leads (or vice versa) must still get a row.
+                    SELECT date_trunc('month', created_at AT TIME ZONE :tz)::date AS p
                       FROM leads
+                     UNION
+                    SELECT date_trunc('month', scheduled_at AT TIME ZONE :tz)::date
+                      FROM consults
+                     UNION
+                    SELECT date_trunc('month', sold_at AT TIME ZONE :tz)::date
+                      FROM sales
+                     UNION
+                    SELECT date_trunc('month', completed_at AT TIME ZONE :tz)::date
+                      FROM treatments WHERE completed_at IS NOT NULL
+                     UNION
+                    SELECT period FROM revenue_reports WHERE status = 'locked'
                 ),
                 lead_agg AS (
                     SELECT date_trunc('month', created_at AT TIME ZONE :tz)::date AS p,
