@@ -5,6 +5,14 @@ licensee revenue, network KPI reporting, product lot traceability, and
 licensee-facing statements. **All data is synthetic** — see `CLAUDE.md` and
 `docs/PROJECT_CONTEXT.md` for the full operating rules and domain context.
 
+## Live demo
+
+- Web: https://aesthetic-enterprises-demo.singhkudrat59.workers.dev
+- API: https://cnos-api.onrender.com/api/v1/health
+
+Free-tier note: the API sleeps when idle — the first request after a quiet spell
+takes ~30s to wake it.
+
 ## Quickstart
 
 Prereqs: Docker, [uv](https://docs.astral.sh/uv/), Node 22+.

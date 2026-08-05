@@ -73,6 +73,16 @@ Set Render `ENVIRONMENT=prod` — this hard-disables `/api/v1/auth/dev-token`.
 Until then the deployed instance runs `dev` deliberately: the demo needs the
 dev-token flow and all data is synthetic (see ADR-0007).
 
+## Current deployment (2026-08-05)
+
+- Web: https://aesthetic-enterprises-demo.singhkudrat59.workers.dev (Cloudflare
+  named the worker after the repo — dashboard project name wins over
+  `wrangler.jsonc` for Git-connected projects)
+- API: https://cnos-api.onrender.com
+- DB: Neon project `clinic-network-os`, us-west-2. Note: Neon provisioned
+  **Postgres 18** (their default) while CI/local run 16 — nothing we use differs
+  yet; align CI/local to 18 if drift ever matters.
+
 ## Troubleshooting
 
 - **Web shows "unreachable"**: check CORS_ORIGINS matches the exact Pages origin;

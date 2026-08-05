@@ -96,7 +96,7 @@ Vite + React + TS strict. TanStack Query for server state; no global client stat
 
 Status labels: `planned | in-progress | merged`. Each phase ends with green CI, deployed main, and its exit criteria demonstrably true.
 
-### Phase 0 — Scaffold & walking skeleton `in-progress`
+### Phase 0 — Scaffold & walking skeleton `merged`
 Monorepo, tooling (uv, ruff, mypy, pytest, Vite, ESLint), docker-compose Postgres, CI pipeline, deployed hello-world round trip (web → api → db) behind the auth gate. **Exit:** a stranger can clone, `make dev`, and hit a live URL.
 
 ### Phase 1 — Schema, tenancy, auth, seed `planned`
