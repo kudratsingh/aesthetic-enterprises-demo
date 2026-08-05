@@ -10,8 +10,11 @@ licensee-facing statements. **All data is synthetic** — see `CLAUDE.md` and
 - Web: https://aesthetic-enterprises-demo.singhkudrat59.workers.dev
 - API: https://cnos-api.onrender.com/api/v1/health
 
-Free-tier note: the API sleeps when idle — the first request after a quiet spell
-takes ~30s to wake it.
+Sign in as HQ (`hq_admin@clinic-network-os.demo` / `demo-hq-2026!`) or an
+operator (`operator-1@clinic-network-os.demo` / `demo-operator-2026!`) —
+synthetic demo credentials, documented on purpose. The two-minute walkthrough
+is scripted in `docs/runbooks/demo-script.md`. Free-tier note: the API sleeps
+when idle — the first request after a quiet spell takes ~30s to wake it.
 
 ## Quickstart
 
@@ -19,16 +22,17 @@ Prereqs: Docker, [uv](https://docs.astral.sh/uv/), Node 22+.
 
 ```sh
 make dev        # Postgres (:5433) + API (:8100) + web (:5173)
+make seed       # deterministic demo world (in a second terminal, first run only)
 ```
 
-Open http://localhost:5173 — sign in with the dev token button and you should see
-the web → api → db round trip complete.
+Open http://localhost:5173 and sign in with the demo credentials above.
 
 ## Common commands
 
 | Command | What it does |
 |---|---|
 | `make dev` | Run the full local stack |
+| `make demo-reset` | Rebuild the deterministic demo world (alias: `make seed`) |
 | `make test` | API tests (unit + integration vs real Postgres) + web typecheck |
 | `make lint` | ruff, mypy --strict, ESLint, Prettier |
 | `make openapi` | Regenerate the typed web API client from the FastAPI spec |
@@ -62,3 +66,4 @@ the web → api → db round trip complete.
 | [ADR-0005](docs/adr/ADR-0005-ghl-sync-not-replace.md) | GHL sync-not-replace funnel ingestion |
 | [ADR-0006](docs/adr/ADR-0006-auth-jwt.md) | Auth — bcrypt credentials, HS256 JWT, claims drive RLS |
 | [ADR-0007](docs/adr/ADR-0007-hosting-providers.md) | Hosting providers — Render, Cloudflare Pages, Neon |
+| [ADR-0008](docs/adr/ADR-0008-kpi-ramp-targets-and-variance-lifecycle.md) | KPI ramp targets as formula; variance flag lifecycle |
