@@ -3,23 +3,29 @@ import { AuthProvider } from './features/auth/AuthContext'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireRole } from './features/auth/RequireRole'
 import { HomePage } from './features/home/HomePage'
+import { DashboardPage } from './features/kpi/DashboardPage'
 import { HqInvoicesPage } from './features/royalty/HqInvoicesPage'
 import { HqRoyaltyRunsPage } from './features/royalty/HqRoyaltyRunsPage'
 import { OperatorReportsPage } from './features/royalty/OperatorReportsPage'
 import { OperatorStatementsPage } from './features/royalty/OperatorStatementsPage'
+import { SupplyPage } from './features/supply/SupplyPage'
+import { VariancePage } from './features/variance/VariancePage'
 import { Shell } from './components/Shell'
 import './App.css'
 
 const HQ_NAV = [
-  { to: '/hq', label: 'Home' },
+  { to: '/hq', label: 'Dashboard' },
   { to: '/hq/royalty', label: 'Royalty runs' },
   { to: '/hq/invoices', label: 'Invoices & aging' },
+  { to: '/hq/variance', label: 'Variance' },
+  { to: '/hq/supply', label: 'Traceability' },
 ]
 
 const OPERATOR_NAV = [
   { to: '/operator', label: 'Home' },
   { to: '/operator/reports', label: 'Monthly reports' },
   { to: '/operator/statements', label: 'Statements & invoices' },
+  { to: '/operator/supply', label: 'Supply' },
 ]
 
 function App() {
@@ -30,9 +36,11 @@ function App() {
 
         <Route element={<RequireRole roles={['hq_admin']} />}>
           <Route element={<Shell title="HQ" nav={HQ_NAV} />}>
-            <Route path="/hq" element={<HomePage />} />
+            <Route path="/hq" element={<DashboardPage />} />
             <Route path="/hq/royalty" element={<HqRoyaltyRunsPage />} />
             <Route path="/hq/invoices" element={<HqInvoicesPage />} />
+            <Route path="/hq/variance" element={<VariancePage />} />
+            <Route path="/hq/supply" element={<SupplyPage />} />
           </Route>
         </Route>
 
@@ -44,6 +52,7 @@ function App() {
               path="/operator/statements"
               element={<OperatorStatementsPage />}
             />
+            <Route path="/operator/supply" element={<SupplyPage />} />
           </Route>
         </Route>
 
