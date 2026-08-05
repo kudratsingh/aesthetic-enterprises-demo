@@ -42,6 +42,29 @@ enforcement in Postgres itself.
 - Location-level scoping for `clinic_staff` (permissions matrix) stays at the
   service layer for the MVP; RLS enforces the org boundary.
 
+## Amendment (2026-08-05): BYPASSRLS is not defeated by FORCE
+
+The original decision assumed Neon's single `neondb_owner` role was safe because
+`FORCE ROW LEVEL SECURITY` binds the table owner. **That was wrong in a way
+tests couldn't see:** Neon grants the database owner the `BYPASSRLS` *attribute*
+(`rolbypassrls = true`), and FORCE defeats ownership bypass only — a role with
+BYPASSRLS skips every policy regardless. The deployed app connecting as
+`neondb_owner` therefore ran with tenancy unenforced, while local/CI (connecting
+as unprivileged `cnos_app`) passed every RLS test honestly. Caught by the first
+operator-scoped read ever run against production.
+
+Consequences now in force:
+
+- **Production uses the same two-role split as local/CI**: a `cnos_app` login
+  role (NOSUPERUSER, NOBYPASSRLS, table grants only) for the app; the owner
+  role only for DDL via `MIGRATIONS_DATABASE_URL`.
+- **Startup guard**: the app checks `rolsuper OR rolbypassrls` on its own role —
+  hard refusal to start in prod, loud warning elsewhere. An integration test
+  pins the property for the test role.
+- Lesson recorded: an RLS test suite proves the *policies*, not the *deployment*
+  — the connecting role's attributes are part of the security boundary and must
+  be verified per environment.
+
 ## Alternatives considered
 
 - **App-level filtering:** rejected — the failure mode this exists to eliminate.
