@@ -71,6 +71,24 @@ class RoyaltyRun(Base):
     generated_at: Mapped[created_at_col]
 
 
+class RoyaltyRunExclusion(Base, TimestampedTenantMixin):
+    """Run policy A3: a location skipped by a run (unlocked/missing report, no
+    active agreement) is recorded here with a reason, so every run is a complete
+    account of the network. Tenant-scoped — an operator sees only its own
+    exclusions — while the run row itself stays network-shared (ADR-0004)."""
+
+    __tablename__ = "royalty_run_exclusions"
+    __table_args__ = (
+        UniqueConstraint("run_id", "location_id", name="uq_royalty_run_exclusions_run_location"),
+    )
+
+    run_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("royalty_runs.id"), nullable=False, index=True
+    )
+    location_id: Mapped[location_fk]
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+
+
 class RoyaltyLineItem(Base, TimestampedTenantMixin):
     __tablename__ = "royalty_line_items"
 
