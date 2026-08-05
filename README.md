@@ -67,3 +67,5 @@ Open http://localhost:5173 and sign in with the demo credentials above.
 | [ADR-0006](docs/adr/ADR-0006-auth-jwt.md) | Auth — bcrypt credentials, HS256 JWT, claims drive RLS |
 | [ADR-0007](docs/adr/ADR-0007-hosting-providers.md) | Hosting providers — Render, Cloudflare Pages, Neon |
 | [ADR-0008](docs/adr/ADR-0008-kpi-ramp-targets-and-variance-lifecycle.md) | KPI ramp targets as formula; variance flag lifecycle |
+| [ADR-0009](docs/adr/ADR-0009-licensee-portal.md) | Licensee portal — checklist, vault, reorders into the ledger |
+| [ADR-0010](docs/adr/ADR-0010-mock-collections-provider.md) | Mock payment provider behind a Stripe-shaped seam |
