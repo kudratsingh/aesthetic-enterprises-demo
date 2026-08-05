@@ -6,7 +6,8 @@ from httpx import AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.core.config import get_settings
+from app.core.config import Settings, get_settings
+from app.core.security import TokenClaims, mint_token
 from scripts.seed import (
     AVG_NET_TICKET_CENTS,
     HQ_EMAIL,
@@ -105,6 +106,24 @@ async def test_seed_world_respects_rls_between_seeded_operators() -> None:
             )
         ).scalar_one()
         assert foreign_reports == 0
+
+
+async def test_seed_variance_flags_exactly_the_designated_underreporter(
+    client: AsyncClient, settings: Settings
+) -> None:
+    """PROJECT_CONTEXT §7: exactly one variance flag per recent period. Reports
+    are derived from calendar-month administration counts — the same bucketing
+    the variance floor uses — so honest locations never false-flag."""
+    await _reseed()
+    token = mint_token(TokenClaims(sub="seed-check", org_id=HQ_ORG_ID, role="hq_admin"), settings)
+    for period in PERIODS:
+        resp = await client.post(
+            f"/api/v1/variance/compute?period={period.isoformat()}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert resp.status_code == 200
+        names = [f["location_name"] for f in resp.json()["flags"]]
+        assert names == [UNDERREPORTER_LOCATION], f"{period}: {names}"
 
 
 def test_seed_world_is_synthetic_only() -> None:
