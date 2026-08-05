@@ -28,24 +28,29 @@ merge; CI is the gate in front of them.
 4. Verify: `curl https://cnos-api.onrender.com/api/v1/health` → `{"status":"ok"}`
    (first hit after idle takes ~30s — free tier cold start).
 
-### 3. Cloudflare Pages (web)
+### 3. Cloudflare (web)
 
-1. https://dash.cloudflare.com → **Workers & Pages → Create → Pages →
-   Connect to Git** → pick the repo.
+Cloudflare's current dashboard provisions Git-connected static sites as
+**Workers with static assets** (the successor to classic Pages). The repo
+carries `web/wrangler.jsonc`, which tells `wrangler deploy` to publish
+`web/dist` as a SPA.
+
+1. https://dash.cloudflare.com → **Workers & Pages → Create → Connect to Git**
+   → pick the repo.
 2. Build settings:
-   - Production branch: `main`
-   - Root directory: `web`
+   - Root directory: **`/web`** (the #1 mistake — `/` makes npm fail on a
+     missing package.json)
    - Build command: `npm run build`
-   - Build output directory: `dist`
-3. Environment variables (production):
+   - Deploy command: `npx wrangler deploy`
+3. Build variables:
    - `VITE_API_URL` = the Render URL (no trailing slash)
    - `NODE_VERSION` = `22`
-4. Deploy. Note the URL, e.g. `https://clinic-network-os.pages.dev`.
+4. Deploy. Note the URL, e.g. `https://clinic-network-os.<account>.workers.dev`.
 
 ### 4. Close the CORS loop
 
 Render dashboard → `cnos-api` → Environment →
-`CORS_ORIGINS` = `["https://<your-project>.pages.dev"]` (JSON array, exact
+`CORS_ORIGINS` = `["https://<your-worker>.workers.dev"]` (JSON array, exact
 origin, no trailing slash) → save (triggers redeploy).
 
 ### 5. Verify the live round trip
