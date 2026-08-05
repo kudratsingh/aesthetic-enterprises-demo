@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import get_settings
 from app.core.errors import DomainError
 from app.core.logging import RequestIDMiddleware, configure_logging
-from app.routers import auth, health, hello, royalty
+from app.routers import auth, health, hello, kpi, royalty, supply, variance
 
 
 def create_app() -> FastAPI:
@@ -25,6 +25,9 @@ def create_app() -> FastAPI:
     app.include_router(hello.router, prefix="/api/v1")
     app.include_router(auth.router, prefix="/api/v1")
     app.include_router(royalty.router, prefix="/api/v1")
+    app.include_router(kpi.router, prefix="/api/v1")
+    app.include_router(variance.router, prefix="/api/v1")
+    app.include_router(supply.router, prefix="/api/v1")
 
     @app.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:
