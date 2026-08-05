@@ -1,5 +1,8 @@
+/* --- Login card --- */
+
 .card {
   width: min(30rem, 90vw);
+  margin: 12vh auto 0;
   padding: 2rem 2.5rem;
   border-radius: 12px;
   background: light-dark(#ffffff, #1f2229);
@@ -25,19 +28,6 @@
   margin-top: 1.5rem;
 }
 
-.card button {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 1px solid light-dark(#c9cdd3, #3a3f48);
-  background: light-dark(#eef0f3, #2a2e36);
-  color: inherit;
-  cursor: pointer;
-}
-
-.card button:hover {
-  background: light-dark(#e2e5e9, #333842);
-}
-
 .login {
   display: flex;
   flex-direction: column;
@@ -53,6 +43,83 @@
   background: light-dark(#ffffff, #16181d);
   color: inherit;
 }
+
+/* --- Role shells --- */
+
+.shell {
+  display: grid;
+  grid-template-areas:
+    'topbar topbar'
+    'nav content';
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  border-bottom: 1px solid light-dark(#e2e5e9, #2c3038);
+  background: light-dark(#ffffff, #1f2229);
+}
+
+.brand {
+  font-weight: 650;
+}
+
+.shell-title {
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.whoami {
+  font-size: 0.85rem;
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
+.sidenav {
+  grid-area: nav;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 0.75rem;
+  border-right: 1px solid light-dark(#e2e5e9, #2c3038);
+}
+
+.sidenav a {
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidenav a:hover {
+  background: light-dark(#eef0f3, #2a2e36);
+}
+
+.sidenav a.active {
+  background: light-dark(#e2e8f2, #2c3644);
+  font-weight: 600;
+}
+
+.content {
+  grid-area: content;
+  padding: 1.5rem 2rem;
+  max-width: 70rem;
+}
+
+.content h1 {
+  font-size: 1.3rem;
+  margin-top: 0;
+}
+
+/* --- Status text --- */
 
 .hint {
   font-size: 0.8rem;

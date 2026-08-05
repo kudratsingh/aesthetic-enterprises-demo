@@ -16,8 +16,19 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
   background: light-dark(#f6f7f9, #16181d);
   color: light-dark(#1a1d21, #e6e8eb);
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid light-dark(#c9cdd3, #3a3f48);
+  background: light-dark(#eef0f3, #2a2e36);
+  color: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: light-dark(#e2e5e9, #333842);
 }

@@ -105,7 +105,7 @@ Alembic migrations for §2.4, RLS policies + tenancy dependency, JWT auth with s
 ### Phase 2 — Royalty domain core `planned`
 Services + endpoints: submit/attest revenue report (locks), run_royalty_period (idempotent, versioned), minimums, issue_invoices, aging query. **Exit:** invariants 2, 3, 4, 6 pass; full royalty cycle executable via API alone.
 
-### Phase 3 — Web shell & royalty UI `planned`
+### Phase 3 — Web shell & royalty UI `in-progress`
 Auth flow, role-based shells, generated client. Operator: submit/attest month, view statements/invoices. HQ: run period, line items, invoices, aging. **Exit:** the two-minute demo's first half runs entirely in the browser.
 
 ### Phase 4 — Dashboard, variance, traceability `planned`
