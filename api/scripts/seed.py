@@ -208,6 +208,11 @@ def build_world() -> World:
     # --- Funnel + supply + reports per location per period ---
     for org_id, loc_id, loc_name in operator_locs:
         loc_lot = rng.sample(lots, k=3)  # each location draws from 3 lots
+        # Reports must be derived from CALENDAR-month administrations — the same
+        # bucketing the variance engine uses (R5). Deriving them from the funnel
+        # loop's counts instead lets treatment spillover systematically skew
+        # reported-vs-floor and false-flag honest locations.
+        admin_dates: list[datetime] = []
         for period in PERIODS:
             months_active = (period.year - 2025) * 12 + period.month - 6
             if months_active <= 0:
@@ -302,6 +307,7 @@ def build_world() -> World:
                             "created_at": treated_at,
                         },
                     )
+                    admin_dates.append(treated_at)
                     month_admins += 1
 
             # Ship enough stock ahead of the month for what gets consumed.
@@ -321,20 +327,24 @@ def build_world() -> World:
                     },
                 )
 
-            # Locked, attested monthly report. Honest locations report near the
-            # consumption-implied value; the underreporter lands ~40% under floor.
-            implied = month_admins * AVG_NET_TICKET_CENTS
+        # Locked, attested monthly reports — derived from calendar-month
+        # administration counts, the exact quantity the variance floor uses.
+        # Honest locations report above the floor; only the designated
+        # underreporter lands ~40% under it.
+        operator_user = next(
+            r["id"] for r in w.rows["users"] if r["org_id"] == org_id and r["role"] == "operator"
+        )
+        for period in PERIODS:
+            calendar_admins = sum(
+                1 for t in admin_dates if t.year == period.year and t.month == period.month
+            )
+            implied = calendar_admins * AVG_NET_TICKET_CENTS
             if loc_name == UNDERREPORTER_LOCATION:
                 gross = int(implied * UNDERREPORT_FACTOR)
             else:
-                gross = int(implied * rng.uniform(1.05, 1.25))
+                gross = int(implied * rng.uniform(1.10, 1.30))
             refunds = int(gross * rng.uniform(0.01, 0.04))
             report_at = datetime(period.year, period.month, 28, 17, tzinfo=UTC)
-            operator_user = next(
-                r["id"]
-                for r in w.rows["users"]
-                if r["org_id"] == org_id and r["role"] == "operator"
-            )
             w.add(
                 "revenue_reports",
                 {
