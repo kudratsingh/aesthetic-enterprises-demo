@@ -83,6 +83,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kpi/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Location Kpis */
+        get: operations["location_kpis_api_v1_kpi_locations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kpi/network": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Network Kpis */
+        get: operations["network_kpis_api_v1_kpi_network_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/royalty/invoices": {
         parameters: {
             query?: never;
@@ -271,6 +305,160 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/supply/administrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Administer */
+        post: operations["administer_api_v1_supply_administrations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supply/lots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Lots */
+        get: operations["list_lots_api_v1_supply_lots_get"];
+        put?: never;
+        /** Receive Lot */
+        post: operations["receive_lot_api_v1_supply_lots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supply/on-hand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** On Hand */
+        get: operations["on_hand_api_v1_supply_on_hand_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supply/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Products */
+        get: operations["list_products_api_v1_supply_products_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supply/recall/{lot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recall */
+        get: operations["recall_api_v1_supply_recall__lot_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/supply/shipments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ship */
+        post: operations["ship_api_v1_supply_shipments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/variance/compute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Compute Variance */
+        post: operations["compute_variance_api_v1_variance_compute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/variance/flags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Variance Flags */
+        get: operations["list_variance_flags_api_v1_variance_flags_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/variance/flags/{flag_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve Variance Flag */
+        post: operations["resolve_variance_flag_api_v1_variance_flags__flag_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/webhooks/ghl": {
         parameters: {
             query?: never;
@@ -299,6 +487,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdministerRequest */
+        AdministerRequest: {
+            /** Location Id */
+            location_id: string;
+            /** Lot Id */
+            lot_id: string;
+            /**
+             * Qty
+             * @default 1
+             */
+            qty: number;
+            /** Synthetic Patient Ref */
+            synthetic_patient_ref: string;
+            /** Treatment Id */
+            treatment_id?: string | null;
+        };
         /** AgingBucketOut */
         AgingBucketOut: {
             /** Amount Due Cents */
@@ -359,6 +563,20 @@ export interface components {
             buckets: components["schemas"]["AgingBucketOut"][];
             /** Invoices */
             invoices: components["schemas"]["AgingInvoiceOut"][];
+        };
+        /** ComputeVarianceResponse */
+        ComputeVarianceResponse: {
+            /** Avg Net Ticket Cents */
+            avg_net_ticket_cents: number;
+            /** Flags */
+            flags: components["schemas"]["VarianceFlagOut"][];
+            /**
+             * Period
+             * Format: date
+             */
+            period: string;
+            /** Threshold */
+            threshold: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -445,12 +663,164 @@ export interface components {
             /** Skipped */
             skipped: number;
         };
+        /** LocationKpiRow */
+        LocationKpiRow: {
+            /** Attainment */
+            attainment: number;
+            /** Location Id */
+            location_id: string;
+            /** Location Name */
+            location_name: string;
+            /** Months Active */
+            months_active: number;
+            /** Org Name */
+            org_name: string;
+            /** Reported Net Base Cents */
+            reported_net_base_cents: number;
+            /** Target Treatments */
+            target_treatments: number;
+            /** Treatments Completed */
+            treatments_completed: number;
+        };
         /** LoginRequest */
         LoginRequest: {
             /** Email */
             email: string;
             /** Password */
             password: string;
+        };
+        /** LotOut */
+        LotOut: {
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            /** Id */
+            id: string;
+            /** Lot Code */
+            lot_code: string;
+            /** Product Id */
+            product_id: string;
+            /** Product Name */
+            product_name: string;
+            /** Supplier */
+            supplier: string;
+        };
+        /** NetworkPeriodKpis */
+        NetworkPeriodKpis: {
+            /** Consults */
+            consults: number;
+            /** Leads */
+            leads: number;
+            /**
+             * Period
+             * Format: date
+             */
+            period: string;
+            /** Plan Value Cents */
+            plan_value_cents: number;
+            /** Reported Net Base Cents */
+            reported_net_base_cents: number;
+            /** Sales */
+            sales: number;
+            /** Treatments Completed */
+            treatments_completed: number;
+        };
+        /** OnHandRow */
+        OnHandRow: {
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            /** Location Id */
+            location_id: string;
+            /** Location Name */
+            location_name: string;
+            /** Lot Code */
+            lot_code: string;
+            /** Lot Id */
+            lot_id: string;
+            /** On Hand */
+            on_hand: number;
+            /** Product Name */
+            product_name: string;
+        };
+        /** ProductOut */
+        ProductOut: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Price Cents */
+            price_cents: number;
+            /** Sku */
+            sku: string;
+            /** Unit */
+            unit: string;
+        };
+        /** RecallResponse */
+        RecallResponse: {
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            /** Lot Code */
+            lot_code: string;
+            /** Lot Id */
+            lot_id: string;
+            /** Product Name */
+            product_name: string;
+            /** Rows */
+            rows: components["schemas"]["RecallRow"][];
+            /** Supplier */
+            supplier: string;
+            /** Total Administrations */
+            total_administrations: number;
+        };
+        /** RecallRow */
+        RecallRow: {
+            /**
+             * Administered At
+             * Format: date-time
+             */
+            administered_at: string;
+            /** Administration Id */
+            administration_id: string;
+            /** Location Name */
+            location_name: string;
+            /** Org Name */
+            org_name: string;
+            /** Qty */
+            qty: number;
+            /** Synthetic Patient Ref */
+            synthetic_patient_ref: string;
+        };
+        /** ReceiveLotRequest */
+        ReceiveLotRequest: {
+            /**
+             * Expiry
+             * Format: date
+             */
+            expiry: string;
+            /** Lot Code */
+            lot_code: string;
+            /** Product Id */
+            product_id: string;
+            /** Supplier */
+            supplier: string;
+        };
+        /** ResolveVarianceRequest */
+        ResolveVarianceRequest: {
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "reviewed" | "resolved";
         };
         /** RevenueReportCreate */
         RevenueReportCreate: {
@@ -630,6 +1000,15 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** ShipRequest */
+        ShipRequest: {
+            /** Location Id */
+            location_id: string;
+            /** Lot Id */
+            lot_id: string;
+            /** Qty */
+            qty: number;
+        };
         /** TokenResponse */
         TokenResponse: {
             /** Access Token */
@@ -653,6 +1032,39 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** VarianceFlagOut */
+        VarianceFlagOut: {
+            /** Administrations */
+            administrations: number;
+            /** Avg Net Ticket Cents */
+            avg_net_ticket_cents: number;
+            /** Expected Floor Cents */
+            expected_floor_cents: number;
+            /** Id */
+            id: string;
+            /** Location Id */
+            location_id: string;
+            /** Location Name */
+            location_name: string;
+            /** Org Name */
+            org_name: string;
+            /**
+             * Period
+             * Format: date
+             */
+            period: string;
+            /** Ratio */
+            ratio: number;
+            /** Reported Net Base Cents */
+            reported_net_base_cents: number;
+            /** Resolution Reason */
+            resolution_reason: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "reviewed" | "resolved";
         };
         /** WebhookResultOut */
         WebhookResultOut: {
@@ -763,6 +1175,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LeadImportResultOut"];
+                };
+            };
+        };
+    };
+    location_kpis_api_v1_kpi_locations_get: {
+        parameters: {
+            query: {
+                /** @description first day of month */
+                period: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationKpiRow"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    network_kpis_api_v1_kpi_network_get: {
+        parameters: {
+            query?: {
+                months?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NetworkPeriodKpis"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1104,6 +1579,301 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RoyaltyLineItemOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    administer_api_v1_supply_administrations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdministerRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_lots_api_v1_supply_lots_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LotOut"][];
+                };
+            };
+        };
+    };
+    receive_lot_api_v1_supply_lots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiveLotRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LotOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    on_hand_api_v1_supply_on_hand_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnHandRow"][];
+                };
+            };
+        };
+    };
+    list_products_api_v1_supply_products_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"][];
+                };
+            };
+        };
+    };
+    recall_api_v1_supply_recall__lot_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecallResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ship_api_v1_supply_shipments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShipRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compute_variance_api_v1_variance_compute_post: {
+        parameters: {
+            query: {
+                /** @description first day of month */
+                period: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComputeVarianceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_variance_flags_api_v1_variance_flags_get: {
+        parameters: {
+            query?: {
+                period?: string | null;
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VarianceFlagOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_variance_flag_api_v1_variance_flags__flag_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                flag_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResolveVarianceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
                 };
             };
             /** @description Validation Error */
