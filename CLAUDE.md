@@ -99,7 +99,7 @@ Status labels: `planned | in-progress | merged`. Each phase ends with green CI, 
 ### Phase 0 — Scaffold & walking skeleton `merged`
 Monorepo, tooling (uv, ruff, mypy, pytest, Vite, ESLint), docker-compose Postgres, CI pipeline, deployed hello-world round trip (web → api → db) behind the auth gate. **Exit:** a stranger can clone, `make dev`, and hit a live URL.
 
-### Phase 1 — Schema, tenancy, auth, seed `planned`
+### Phase 1 — Schema, tenancy, auth, seed `merged`
 Alembic migrations for §2.4, RLS policies + tenancy dependency, JWT auth with seeded users (hq_admin, operator_a, operator_b, clinic_staff), deterministic seed (~20 locations, synthetic funnel + treatments, one deliberate underreporter). **Exit:** invariant tests 1, 5 pass; seed reset is one command.
 
 ### Phase 2 — Royalty domain core `planned`

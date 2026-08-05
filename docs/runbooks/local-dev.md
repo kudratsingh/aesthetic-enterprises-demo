@@ -19,10 +19,25 @@ out of the box. Template: `.env.example` at the repo root. Never commit `.env`.
 ## Auth (Phase 1, ADR-0006)
 
 `POST /api/v1/auth/login` with email + password returns a JWT whose claims
-(org, role) drive the RLS tenant context. Users come from the seed (see the
-seed section once Phase 1 PR B lands). For curl-level poking without a user row:
-`make token ROLE=hq_admin ORG=<org-uuid>`, then
+(org, role) drive the RLS tenant context. For curl-level poking without a user
+row: `make token ROLE=hq_admin ORG=<org-uuid>`, then
 `curl -H "Authorization: Bearer <token>" 127.0.0.1:8100/api/v1/hello`.
+
+## Seed world & demo logins
+
+`make seed` (alias `make demo-reset`) rebuilds the deterministic synthetic world:
+1 HQ + 15 operator orgs, 20 locations, 6 months of funnel/supply history, 120
+locked revenue reports, and one designated underreporter
+("Vista Glow Clinic — Chandler", ~40% below its supply-implied floor).
+**Destructive**: truncates every table first. All data is fabricated.
+
+| Login | Password | Role |
+|---|---|---|
+| `hq_admin@clinic-network-os.demo` | `demo-hq-2026!` | hq_admin |
+| `operator-1@clinic-network-os.demo` … `operator-15@…` | `demo-operator-2026!` | operator |
+| `staff-2@clinic-network-os.demo` | `demo-staff-2026!` | clinic_staff |
+
+These are synthetic demo credentials, documented here on purpose.
 
 ## Database roles (ADR-0002)
 
