@@ -1,0 +1,23 @@
+# Render Blueprint — creates the API service when you connect this repo
+# (Render dashboard → New → Blueprint). Web is on Cloudflare Pages, DB on Neon.
+# See docs/runbooks/deploy.md for the full setup walkthrough.
+services:
+  - type: web
+    name: cnos-api
+    runtime: docker
+    dockerfilePath: ./infra/Dockerfile
+    dockerContext: .
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/v1/health
+    envVars:
+      # dev (not prod) until Phase 1 lands real auth: the Phase 0 demo needs the
+      # dev-token endpoint, and every byte of data is synthetic. Flip with ADR-0006.
+      - key: ENVIRONMENT
+        value: dev
+      - key: DATABASE_URL
+        sync: false # paste the Neon asyncpg URL in the dashboard — never committed
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false # JSON array with your Pages URL, e.g. ["https://<project>.pages.dev"]
