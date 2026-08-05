@@ -26,6 +26,7 @@ from uuid6 import uuid7
 from app.core.config import get_settings
 from app.db import models as m
 from app.services.auth import hash_password
+from app.services.portal import ONBOARDING_TEMPLATE
 
 RNG_SEED = 42
 # Fixed anchor: the seed world ends just before this date; 6 complete months back.
@@ -164,6 +165,50 @@ def build_world() -> World:
                 "effective_to": None,
             },
         )
+        # Portal (Phase 7): onboarding checklist + vault documents per org.
+        # Older orgs finished onboarding; the three newest are mid-checklist so
+        # the demo shows real progress states.
+        operator_user_id = next(
+            r["id"] for r in w.rows["users"] if r["org_id"] == org_id and r["role"] == "operator"
+        )
+        org_start = date(2025, 6 + (idx % 7), 1)
+        done_count = len(ONBOARDING_TEMPLATE) if idx < 12 else 3 + (idx % 3) * 2
+        for sort_order, (title, category, due_offset) in enumerate(ONBOARDING_TEMPLATE):
+            done = sort_order < done_count
+            w.add(
+                "onboarding_tasks",
+                {
+                    "id": uuid7(),
+                    "org_id": org_id,
+                    "title": title,
+                    "category": category,
+                    "sort_order": sort_order,
+                    "due_offset_days": due_offset,
+                    "completed_at": (
+                        datetime(org_start.year, org_start.month, 1, 12, tzinfo=UTC)
+                        + timedelta(days=due_offset)
+                        if done
+                        else None
+                    ),
+                    "completed_by": operator_user_id if done else None,
+                },
+            )
+        for title, category in [
+            ("License agreement (countersigned)", "license_agreement"),
+            ("Network playbook v3", "playbook"),
+            ("Injectables handling policy", "policy"),
+        ]:
+            w.add(
+                "portal_documents",
+                {
+                    "id": uuid7(),
+                    "org_id": org_id,
+                    "title": title,
+                    "category": category,
+                    "body": f"Synthetic {category} document for {org_name}. No real content.",
+                    "uploaded_by": operator_user_id,
+                },
+            )
         for loc_n in range(n_locs):
             city = next(cities)
             name = (
@@ -204,6 +249,40 @@ def build_world() -> World:
             },
         )
         lots.append(lot_id)
+
+    # Reorder flow demo state: one draft (operator-1) and one submitted order
+    # (operator-2) so HQ can fulfill live into the supply ledger.
+    for order_idx, (status, org_pos) in enumerate([("draft", 0), ("submitted", 1)]):
+        o_org, o_loc, _ = operator_locs[org_pos]
+        o_user = next(
+            r["id"] for r in w.rows["users"] if r["org_id"] == o_org and r["role"] == "operator"
+        )
+        order_id = uuid7()
+        w.add(
+            "product_orders",
+            {
+                "id": order_id,
+                "org_id": o_org,
+                "location_id": o_loc,
+                "status": status,
+                "submitted_at": (
+                    datetime(2026, 7, 28, 15, tzinfo=UTC) if status == "submitted" else None
+                ),
+                "fulfilled_at": None,
+                "created_by": o_user,
+            },
+        )
+        for line_pos, qty in [(0, 10), (1 + order_idx, 6)]:
+            w.add(
+                "product_order_lines",
+                {
+                    "id": uuid7(),
+                    "org_id": o_org,
+                    "order_id": order_id,
+                    "product_id": product_ids[line_pos][0],
+                    "qty": qty,
+                },
+            )
 
     # --- Funnel + supply + reports per location per period ---
     for org_id, loc_id, loc_name in operator_locs:
@@ -374,6 +453,10 @@ INSERT_ORDER = [
     ("license_agreements", m.LicenseAgreement),
     ("products", m.Product),
     ("lots", m.Lot),
+    ("onboarding_tasks", m.OnboardingTask),
+    ("portal_documents", m.PortalDocument),
+    ("product_orders", m.ProductOrder),
+    ("product_order_lines", m.ProductOrderLine),
     ("leads", m.Lead),
     ("consults", m.Consult),
     ("sales", m.Sale),
@@ -384,6 +467,10 @@ INSERT_ORDER = [
 ]
 
 TRUNCATE_ORDER = [
+    "product_order_lines",
+    "product_orders",
+    "portal_documents",
+    "onboarding_tasks",
     "variance_flags",
     "invoices",
     "royalty_line_items",

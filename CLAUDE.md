@@ -118,10 +118,10 @@ HQ KPI dashboard vs ramp targets; variance reconciliation view flagging the seed
 
 ### Post-MVP (build only on a real signal — an offer, or their explicit interest)
 
-### Phase 6 — Collections `planned`
+### Phase 6 — Collections `in-progress`
 Stripe invoicing + payment-status webhooks so invoices become money movement; ACH as end state. **Exit:** an invoice can be paid in test mode and aging updates itself.
 
-### Phase 7 — Licensee portal `planned`
+### Phase 7 — Licensee portal `in-progress`
 60-day onboarding checklist, document vault, product reorder flow tied to the lots ledger. **Exit:** an operator can complete onboarding tasks and place a product order end-to-end.
 
 ### Phase 8 — Attribution `planned`
