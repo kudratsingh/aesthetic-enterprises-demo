@@ -119,6 +119,129 @@
   margin-top: 0;
 }
 
+/* --- Data tables, forms, badges, stats --- */
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.tbl th,
+.tbl td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid light-dark(#e8eaee, #2c3038);
+}
+
+.tbl th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
+.tbl .num,
+.tbl td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tbl tfoot td {
+  border-bottom: none;
+  border-top: 2px solid light-dark(#c9cdd3, #3a3f48);
+}
+
+.panel {
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid light-dark(#e2e5e9, #2c3038);
+  background: light-dark(#ffffff, #1f2229);
+  margin-bottom: 1.5rem;
+}
+
+.row-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.row-form input,
+.row-form select,
+select {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid light-dark(#c9cdd3, #3a3f48);
+  background: light-dark(#ffffff, #16181d);
+  color: inherit;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.b-draft {
+  background: light-dark(#eef0f3, #2a2e36);
+}
+
+.b-submitted,
+.b-open {
+  background: light-dark(#fdf3d7, #4a3f1d);
+  color: light-dark(#7a5d00, #ffd966);
+}
+
+.b-locked,
+.b-paid,
+.b-resolved {
+  background: light-dark(#dff2e4, #1d3a28);
+  color: light-dark(#116632, #57c778);
+}
+
+.b-issued,
+.b-reviewed {
+  background: light-dark(#e2e8f2, #2c3644);
+  color: light-dark(#2b4a77, #9fc0ee);
+}
+
+.b-overdue {
+  background: light-dark(#fbe3e4, #46201f);
+  color: light-dark(#a4262c, #ec7a80);
+}
+
+.stat-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.stat {
+  min-width: 9rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid light-dark(#e2e5e9, #2c3038);
+  background: light-dark(#ffffff, #1f2229);
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- Status text --- */
 
 .hint {

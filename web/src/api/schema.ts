@@ -59,6 +59,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/imports/leads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Leads
+         * @description Bulk lead import from a raw text/csv body (hq_admin only).
+         *
+         *     Columns: source, external_id, location_id[, created_at] — same idempotent
+         *     upsert path as the webhook. Returns imported/skipped counts and per-row
+         *     errors keyed by CSV line number.
+         */
+        post: operations["import_leads_api_v1_imports_leads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kpi/locations": {
         parameters: {
             query?: never;
@@ -85,6 +109,23 @@ export interface paths {
         };
         /** Network Kpis */
         get: operations["network_kpis_api_v1_kpi_network_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Locations */
+        get: operations["list_locations_api_v1_locations_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -435,6 +476,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/webhooks/ghl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ghl Webhook
+         * @description HMAC-verified CRM event → idempotent lead/consult upsert.
+         *
+         *     No JWT: authentication is the HMAC-SHA256 signature of the raw body in the
+         *     X-Webhook-Signature header (401 on mismatch, 503 if no secret configured).
+         *     Payload shape: docs/runbooks/integrations.md.
+         */
+        post: operations["ghl_webhook_api_v1_webhooks_ghl_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -547,6 +612,13 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** ImportRowError */
+        ImportRowError: {
+            /** Line */
+            line: number;
+            /** Message */
+            message: string;
+        };
         /** InvoiceOut */
         InvoiceOut: {
             /** Amount Due Cents */
@@ -599,6 +671,15 @@ export interface components {
              */
             run_id: string;
         };
+        /** LeadImportResultOut */
+        LeadImportResultOut: {
+            /** Errors */
+            errors: components["schemas"]["ImportRowError"][];
+            /** Imported */
+            imported: number;
+            /** Skipped */
+            skipped: number;
+        };
         /** LocationKpiRow */
         LocationKpiRow: {
             /** Attainment */
@@ -617,6 +698,22 @@ export interface components {
             target_treatments: number;
             /** Treatments Completed */
             treatments_completed: number;
+        };
+        /** LocationOut */
+        LocationOut: {
+            /**
+             * Activated On
+             * Format: date
+             */
+            activated_on: string;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Org Id */
+            org_id: string;
+            /** Org Name */
+            org_name: string;
         };
         /** LoginRequest */
         LoginRequest: {
@@ -1002,6 +1099,15 @@ export interface components {
              */
             status: "open" | "reviewed" | "resolved";
         };
+        /** WebhookResultOut */
+        WebhookResultOut: {
+            /** Consult Created */
+            consult_created: boolean;
+            /** Consult Updated */
+            consult_updated: boolean;
+            /** Lead Created */
+            lead_created: boolean;
+        };
     };
     responses: never;
     parameters: never;
@@ -1086,6 +1192,26 @@ export interface operations {
             };
         };
     };
+    import_leads_api_v1_imports_leads_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeadImportResultOut"];
+                };
+            };
+        };
+    };
     location_kpis_api_v1_kpi_locations_get: {
         parameters: {
             query: {
@@ -1145,6 +1271,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_locations_api_v1_locations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationOut"][];
                 };
             };
         };
@@ -1790,6 +1936,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ghl_webhook_api_v1_webhooks_ghl_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookResultOut"];
                 };
             };
         };
