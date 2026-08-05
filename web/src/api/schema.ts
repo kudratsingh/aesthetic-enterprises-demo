@@ -117,6 +117,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Locations */
+        get: operations["list_locations_api_v1_locations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/royalty/invoices": {
         parameters: {
             query?: never;
@@ -682,6 +699,22 @@ export interface components {
             /** Treatments Completed */
             treatments_completed: number;
         };
+        /** LocationOut */
+        LocationOut: {
+            /**
+             * Activated On
+             * Format: date
+             */
+            activated_on: string;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Org Id */
+            org_id: string;
+            /** Org Name */
+            org_name: string;
+        };
         /** LoginRequest */
         LoginRequest: {
             /** Email */
@@ -1238,6 +1271,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_locations_api_v1_locations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationOut"][];
                 };
             };
         };

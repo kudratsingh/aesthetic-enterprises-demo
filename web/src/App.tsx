@@ -3,7 +3,10 @@ import { AuthProvider } from './features/auth/AuthContext'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireRole } from './features/auth/RequireRole'
 import { HomePage } from './features/home/HomePage'
-import { Placeholder } from './features/royalty/Placeholder'
+import { HqInvoicesPage } from './features/royalty/HqInvoicesPage'
+import { HqRoyaltyRunsPage } from './features/royalty/HqRoyaltyRunsPage'
+import { OperatorReportsPage } from './features/royalty/OperatorReportsPage'
+import { OperatorStatementsPage } from './features/royalty/OperatorStatementsPage'
 import { Shell } from './components/Shell'
 import './App.css'
 
@@ -28,27 +31,18 @@ function App() {
         <Route element={<RequireRole roles={['hq_admin']} />}>
           <Route element={<Shell title="HQ" nav={HQ_NAV} />}>
             <Route path="/hq" element={<HomePage />} />
-            <Route
-              path="/hq/royalty"
-              element={<Placeholder title="Royalty runs" />}
-            />
-            <Route
-              path="/hq/invoices"
-              element={<Placeholder title="Invoices & aging" />}
-            />
+            <Route path="/hq/royalty" element={<HqRoyaltyRunsPage />} />
+            <Route path="/hq/invoices" element={<HqInvoicesPage />} />
           </Route>
         </Route>
 
         <Route element={<RequireRole roles={['operator', 'clinic_staff']} />}>
           <Route element={<Shell title="Operator" nav={OPERATOR_NAV} />}>
             <Route path="/operator" element={<HomePage />} />
-            <Route
-              path="/operator/reports"
-              element={<Placeholder title="Monthly reports" />}
-            />
+            <Route path="/operator/reports" element={<OperatorReportsPage />} />
             <Route
               path="/operator/statements"
-              element={<Placeholder title="Statements & invoices" />}
+              element={<OperatorStatementsPage />}
             />
           </Route>
         </Route>
