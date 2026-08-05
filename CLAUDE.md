@@ -108,7 +108,7 @@ Services + endpoints: submit/attest revenue report (locks), run_royalty_period (
 ### Phase 3 — Web shell & royalty UI `in-progress`
 Auth flow, role-based shells, generated client. Operator: submit/attest month, view statements/invoices. HQ: run period, line items, invoices, aging. **Exit:** the two-minute demo's first half runs entirely in the browser.
 
-### Phase 4 — Dashboard, variance, traceability `in-progress`
+### Phase 4 — Dashboard, variance, traceability `merged`
 HQ KPI dashboard vs ramp targets; variance reconciliation view flagging the seeded underreporter with the math shown; lot receive/ship/administer UI + one-click recall query. **Exit:** the showpiece moments render from seed with zero manual setup.
 
 ### Phase 5 — Integration proof & demo hardening `planned`
