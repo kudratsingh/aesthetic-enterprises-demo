@@ -1,4 +1,5 @@
 import { fmtCents } from '../../lib/format'
+import { useCollectInvoice } from '../collections/api'
 import {
   locationMaps,
   useAging,
@@ -12,6 +13,7 @@ export function HqInvoicesPage() {
   const aging = useAging()
   const locations = useLocations()
   const pay = usePayInvoice()
+  const collect = useCollectInvoice()
   const { orgName } = locationMaps(locations.data)
 
   const live = (invoices.data ?? []).filter((inv) => inv.superseded_by === null)
@@ -72,12 +74,20 @@ export function HqInvoicesPage() {
                   </td>
                   <td>
                     {inv.status !== 'paid' && (
-                      <button
-                        disabled={pay.isPending}
-                        onClick={() => pay.mutate(inv.id)}
-                      >
-                        Mark paid
-                      </button>
+                      <>
+                        <button
+                          disabled={collect.isPending}
+                          onClick={() => collect.mutate(inv.id)}
+                        >
+                          Collect (mock)
+                        </button>{' '}
+                        <button
+                          disabled={pay.isPending}
+                          onClick={() => pay.mutate(inv.id)}
+                        >
+                          Mark paid
+                        </button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -86,6 +96,11 @@ export function HqInvoicesPage() {
           </table>
         )}
         {pay.isError && <p className="bad">payment recording failed</p>}
+        {collect.isError && <p className="bad">mock collection failed</p>}
+        <p className="hint">
+          Collect (mock) runs the full provider flow — checkout session, then a
+          simulated provider callback — against the mock payment provider.
+        </p>
       </section>
     </>
   )

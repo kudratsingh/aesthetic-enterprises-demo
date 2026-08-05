@@ -25,6 +25,69 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/collections/invoices/{invoice_id}/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Checkout
+         * @description Open a provider checkout session for a live, unpaid invoice (operator
+         *     pays own via RLS; HQ may start collection). Idempotent per invoice.
+         */
+        post: operations["create_checkout_api_v1_collections_invoices__invoice_id__checkout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collections/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Payments
+         * @description Payments visible to the caller (RLS-scoped), optionally for one invoice.
+         */
+        get: operations["list_payments_api_v1_collections_payments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collections/payments/{payment_id}/simulate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Payment
+         * @description Dev/demo stand-in for the mock provider's hosted-checkout redirect: marks
+         *     the payment succeeded through the same internal path the webhook uses. The
+         *     payment must be visible to the caller (operator: own org; HQ: any).
+         */
+        post: operations["simulate_payment_api_v1_collections_payments__payment_id__simulate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -627,6 +690,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/webhooks/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Payments Webhook
+         * @description HMAC-verified provider callback → idempotent payment/invoice update.
+         *
+         *     No JWT: authentication is the HMAC-SHA256 signature of the raw body in the
+         *     X-Webhook-Signature header (401 on mismatch, 503 if no secret configured).
+         *     Payload: {"provider_ref": str, "event": "payment_succeeded"|"payment_failed"}.
+         */
+        post: operations["payments_webhook_api_v1_webhooks_payments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -707,6 +794,20 @@ export interface components {
             buckets: components["schemas"]["AgingBucketOut"][];
             /** Invoices */
             invoices: components["schemas"]["AgingInvoiceOut"][];
+        };
+        /** CheckoutOut */
+        CheckoutOut: {
+            /**
+             * Checkout Url
+             * @description Provider-hosted checkout page for this session (mock URL in dev/demo)
+             */
+            checkout_url: string;
+            payment: components["schemas"]["PaymentOut"];
+            /**
+             * Reused
+             * @description True when an existing open payment for the invoice was returned
+             */
+            reused: boolean;
         };
         /** ComputeVarianceResponse */
         ComputeVarianceResponse: {
@@ -1017,6 +1118,73 @@ export interface components {
             status: "draft" | "submitted" | "fulfilled";
             /** Submitted At */
             submitted_at: string | null;
+        };
+        /** PaymentOut */
+        PaymentOut: {
+            /** Amount Cents */
+            amount_cents: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Invoice Id
+             * Format: uuid
+             */
+            invoice_id: string;
+            /**
+             * Org Id
+             * Format: uuid
+             */
+            org_id: string;
+            /** Provider */
+            provider: string;
+            /** Provider Ref */
+            provider_ref: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "initiated" | "succeeded" | "failed";
+            /** Updated At */
+            updated_at: string | null;
+        };
+        /**
+         * PaymentResultOut
+         * @description Outcome of applying one provider event (webhook or simulate).
+         */
+        PaymentResultOut: {
+            /**
+             * Applied
+             * @description False when the event was an idempotent replay and changed nothing
+             */
+            applied: boolean;
+            /**
+             * Invoice Id
+             * Format: uuid
+             */
+            invoice_id: string;
+            /**
+             * Invoice Status
+             * @description Invoice status after the event; None when the event left it untouched
+             */
+            invoice_status: ("issued" | "paid" | "overdue") | null;
+            /**
+             * Payment Id
+             * Format: uuid
+             */
+            payment_id: string;
+            /**
+             * Payment Status
+             * @enum {string}
+             */
+            payment_status: "initiated" | "succeeded" | "failed";
         };
         /** ProductOut */
         ProductOut: {
@@ -1375,6 +1543,99 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_checkout_api_v1_collections_invoices__invoice_id__checkout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoice_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_payments_api_v1_collections_payments_get: {
+        parameters: {
+            query?: {
+                invoice_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_payment_api_v1_collections_payments__payment_id__simulate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                payment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentResultOut"];
                 };
             };
             /** @description Validation Error */
@@ -2450,6 +2711,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WebhookResultOut"];
+                };
+            };
+        };
+    };
+    payments_webhook_api_v1_webhooks_payments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentResultOut"];
                 };
             };
         };
