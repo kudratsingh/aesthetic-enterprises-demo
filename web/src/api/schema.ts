@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/v1/auth/dev-token": {
+    "/api/v1/auth/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -14,12 +14,11 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Dev Token
-         * @description Phase 0 stub: mints a signed JWT for any requested role, dev/test environments only.
-         *
-         *     Replaced in Phase 1 by real credential auth against seeded users (ADR-0006).
+         * Login
+         * @description Credential login against seeded users (ADR-0006). Replaces the Phase 0
+         *     dev-token stub. Claims (sub, org_id, role) drive the RLS tenant context.
          */
-        post: operations["dev_token_api_v1_auth_dev_token_post"];
+        post: operations["login_api_v1_auth_login_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -64,25 +63,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** DevTokenRequest */
-        DevTokenRequest: {
-            /**
-             * Org Id
-             * @default org-hq
-             */
-            org_id: string;
-            /**
-             * Role
-             * @default hq_admin
-             * @enum {string}
-             */
-            role: "hq_admin" | "operator" | "clinic_staff";
-            /**
-             * Sub
-             * @default dev-user
-             */
-            sub: string;
-        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -99,6 +79,13 @@ export interface components {
             environment: string;
             /** Message */
             message: string;
+        };
+        /** LoginRequest */
+        LoginRequest: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
         };
         /** TokenResponse */
         TokenResponse: {
@@ -133,7 +120,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    dev_token_api_v1_auth_dev_token_post: {
+    login_api_v1_auth_login_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -142,7 +129,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DevTokenRequest"];
+                "application/json": components["schemas"]["LoginRequest"];
             };
         };
         responses: {

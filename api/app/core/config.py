@@ -8,8 +8,12 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     environment: Literal["dev", "test", "prod"] = "dev"
-    # Matches infra/docker-compose.yml (host port 5433 to avoid local Postgres collisions).
-    database_url: str = "postgresql+asyncpg://cnos:cnos@localhost:5433/cnos"
+    # App connections use the non-superuser role so RLS applies (ADR-0002); the
+    # admin/owner URL is only for DDL. Ports match infra/docker-compose.yml.
+    database_url: str = "postgresql+asyncpg://cnos_app:cnos_app@localhost:5433/cnos"
+    # None → migrations run over database_url (Neon: one owner role does both).
+    # Locally the Makefile exports the cnos admin URL for migrate/test targets.
+    migrations_database_url: str | None = None
     jwt_secret: str = "dev-only-secret-change-me-not-for-production"
     jwt_algorithm: str = "HS256"
     jwt_ttl_seconds: int = 3600

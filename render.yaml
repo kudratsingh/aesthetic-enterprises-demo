@@ -11,10 +11,10 @@ services:
     autoDeploy: true
     healthCheckPath: /api/v1/health
     envVars:
-      # dev (not prod) until Phase 1 lands real auth: the Phase 0 demo needs the
-      # dev-token endpoint, and every byte of data is synthetic. Flip with ADR-0006.
+      # Real credential auth landed with Phase 1 (ADR-0006); the dev-token stub
+      # is gone, so prod posture everywhere.
       - key: ENVIRONMENT
-        value: dev
+        value: prod
       - key: DATABASE_URL
         sync: false # paste the Neon asyncpg URL in the dashboard — never committed
       - key: JWT_SECRET

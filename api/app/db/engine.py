@@ -1,4 +1,3 @@
-from collections.abc import AsyncIterator
 from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import (
@@ -18,14 +17,7 @@ def get_engine() -> AsyncEngine:
 
 @lru_cache
 def get_session_factory() -> async_sessionmaker[AsyncSession]:
+    """Request handlers must not use this directly — go through
+    app.db.tenancy.TenantSession so the RLS context is always set (CLAUDE.md §2.3).
+    Only the auth service (pre-tenant login lookup) opens sessions here."""
     return async_sessionmaker(get_engine(), expire_on_commit=False)
-
-
-async def get_session() -> AsyncIterator[AsyncSession]:
-    """FastAPI dependency yielding a session.
-
-    Phase 1 replaces direct use of this with the RLS tenancy context manager that
-    executes `SET LOCAL app.org_id / app.role` from the verified JWT before any query.
-    """
-    async with get_session_factory()() as session:
-        yield session

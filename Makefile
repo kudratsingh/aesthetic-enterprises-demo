@@ -1,9 +1,12 @@
 COMPOSE = docker compose -f infra/docker-compose.yml
+# Admin/owner URL for DDL (migrations); the app itself connects as cnos_app so
+# RLS applies (ADR-0002).
+ADMIN_DB_URL = postgresql+asyncpg://cnos:cnos@localhost:5433/cnos
 
-.PHONY: dev dev-api dev-web db-up db-down db-nuke test test-api test-web lint openapi token
+.PHONY: dev dev-api dev-web db-up db-down db-nuke migrate test test-api test-web lint openapi token
 
-## dev: start Postgres, API (:8100), and web (:5173) together
-dev: db-up
+## dev: start Postgres (migrated), API (:8100), and web (:5173) together
+dev: db-up migrate
 	$(MAKE) -j2 dev-api dev-web
 
 dev-api:
@@ -22,9 +25,12 @@ db-down:
 db-nuke:
 	$(COMPOSE) down -v
 
+migrate: db-up
+	cd api && MIGRATIONS_DATABASE_URL=$(ADMIN_DB_URL) uv run alembic upgrade head
+
 test: test-api test-web
 
-test-api: db-up
+test-api: db-up migrate
 	cd api && uv run pytest
 
 test-web:

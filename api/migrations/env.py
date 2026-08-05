@@ -5,16 +5,22 @@ from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.core.config import get_settings
+from app.db.models import Base
 
 config = context.config
 
-# Phase 1: import the ORM Base and set this to Base.metadata for autogenerate support.
-target_metadata = None
+target_metadata = Base.metadata
+
+
+def _migrations_url() -> str:
+    """Admin/owner URL for DDL; falls back to the app URL (single-role setups like Neon)."""
+    settings = get_settings()
+    return settings.migrations_database_url or settings.database_url
 
 
 def run_migrations_offline() -> None:
     context.configure(
-        url=get_settings().database_url,
+        url=_migrations_url(),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -31,7 +37,7 @@ def do_run_migrations(connection: Connection) -> None:
 
 async def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = get_settings().database_url
+    configuration["sqlalchemy.url"] = _migrations_url()
     connectable = async_engine_from_config(
         configuration, prefix="sqlalchemy.", poolclass=pool.NullPool
     )

@@ -13,6 +13,8 @@ dependencies = [
     "pydantic-settings>=2.3",
     "structlog>=24.1",
     "pyjwt>=2.8",
+    "uuid6>=2025.0.1",
+    "bcrypt>=5.0.0",
 ]
 
 [dependency-groups]
@@ -43,6 +45,10 @@ files = ["app", "tests", "scripts"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 asyncio_mode = "auto"
+# One loop for the whole suite: the app's cached async engine pools connections,
+# and per-test loops would strand them ("attached to a different loop").
+asyncio_default_test_loop_scope = "session"
+asyncio_default_fixture_loop_scope = "session"
 testpaths = ["tests"]
 markers = [
     "integration: hits a real Postgres (docker-compose locally, service container in CI)",
