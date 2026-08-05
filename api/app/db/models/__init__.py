@@ -6,6 +6,7 @@ from app.db.models.royalty import (
     RevenueReport,
     RoyaltyLineItem,
     RoyaltyRun,
+    RoyaltyRunExclusion,
     VarianceFlag,
 )
 from app.db.models.supply import Administration, LocationLotOnHand, Lot, Product, Shipment
@@ -25,6 +26,7 @@ __all__ = [
     "RevenueReport",
     "RoyaltyLineItem",
     "RoyaltyRun",
+    "RoyaltyRunExclusion",
     "Sale",
     "Shipment",
     "Treatment",
