@@ -8,9 +8,9 @@ background before working on an area, and write back anything a future contribut
 
 | Path | What lives here |
 |---|---|
+| `PROJECT_CONTEXT.md` | Domain semantics, business rules, and architecture rationale. **Read this first** for any domain work. |
 | `adr/` | Architecture Decision Records — `ADR-NNNN-title.md`, numbered, append-only. Major decisions only; supersede, never delete. |
 | `runbooks/` | Operational how-tos: local dev, deploy, demo reset, incident notes. Created as needed. |
-| `domain/` | Domain explanations: royalty math, funnel model, supply ledger semantics. Created as needed. |
 | `phases/` | Per-phase working notes and exit-criteria evidence. Created as needed. |
 
 ## Rules

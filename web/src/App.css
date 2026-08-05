@@ -1,0 +1,47 @@
+.card {
+  width: min(30rem, 90vw);
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  background: light-dark(#ffffff, #1f2229);
+  border: 1px solid light-dark(#e2e5e9, #2c3038);
+}
+
+.card h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  margin-top: 0.25rem;
+  color: light-dark(#5f6672, #9aa1ab);
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.card section {
+  margin-top: 1.5rem;
+}
+
+.card button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid light-dark(#c9cdd3, #3a3f48);
+  background: light-dark(#eef0f3, #2a2e36);
+  color: inherit;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background: light-dark(#e2e5e9, #333842);
+}
+
+.good {
+  color: light-dark(#116632, #57c778);
+}
+
+.bad {
+  color: light-dark(#a4262c, #ec7a80);
+}

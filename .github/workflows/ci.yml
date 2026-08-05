@@ -1,0 +1,76 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    services:
+      db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cnos
+          POSTGRES_PASSWORD: cnos
+          POSTGRES_DB: cnos
+        ports:
+          - "5433:5432"
+        options: >-
+          --health-cmd "pg_isready -U cnos -d cnos"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql+asyncpg://cnos:cnos@localhost:5433/cnos
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run mypy
+      # Migrations must replay from an empty database (CLAUDE.md §3).
+      - run: uv run alembic upgrade head
+      - run: uv run pytest
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      # build runs tsc -b (typecheck) then vite build
+      - run: npm run build
+
+  openapi-client-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: uv sync --frozen
+        working-directory: api
+      - run: uv run python -m scripts.export_openapi
+        working-directory: api
+      - run: npm ci && npm run generate:api
+        working-directory: web
+      - name: generated client must be committed
+        run: git diff --exit-code -- web/src/api/schema.ts

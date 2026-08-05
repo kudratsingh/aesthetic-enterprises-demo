@@ -18,6 +18,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Generated (rebuild with `make openapi`; the generated web client IS committed)
+api/openapi.json
+
 # OS / editor
 .DS_Store
 .idea/
