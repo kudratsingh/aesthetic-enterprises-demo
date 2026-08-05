@@ -47,5 +47,18 @@ the web → api → db round trip complete.
 ## Docs
 
 - `docs/PROJECT_CONTEXT.md` — domain semantics, business rules, rationale
-- `docs/adr/` — architecture decision records
+- `docs/adr/` — architecture decision records (index below)
+- `docs/runbooks/` — local dev, deploy, integrations, demo script
 - `CLAUDE.md` — engineering standards, workflow, phase plan
+
+## ADR index
+
+| ADR | Decision |
+|---|---|
+| [ADR-0001](docs/adr/ADR-0001-stack.md) | Stack selection |
+| [ADR-0002](docs/adr/ADR-0002-rls-session-variable-tenancy.md) | RLS session-variable tenancy |
+| [ADR-0003](docs/adr/ADR-0003-append-only-supply-ledger.md) | Append-only supply ledger |
+| [ADR-0004](docs/adr/ADR-0004-versioned-idempotent-royalty-runs.md) | Versioned, idempotent royalty runs |
+| [ADR-0005](docs/adr/ADR-0005-ghl-sync-not-replace.md) | GHL sync-not-replace funnel ingestion |
+| [ADR-0006](docs/adr/ADR-0006-auth-jwt.md) | Auth — bcrypt credentials, HS256 JWT, claims drive RLS |
+| [ADR-0007](docs/adr/ADR-0007-hosting-providers.md) | Hosting providers — Render, Cloudflare Pages, Neon |
