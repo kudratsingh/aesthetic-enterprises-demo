@@ -126,6 +126,35 @@ async def test_seed_variance_flags_exactly_the_designated_underreporter(
         assert names == [UNDERREPORTER_LOCATION], f"{period}: {names}"
 
 
+async def test_seed_builds_royalty_history_with_aging_spread(
+    client: AsyncClient, settings: Settings
+) -> None:
+    """Feb-Jun get real runs + invoices (July stays unrun for the live demo
+    beat); paid fractions leave older unpaid invoices spread across aging
+    buckets so the invoices/aging screens are populated from seed."""
+    counts = await _reseed()
+    assert counts["royalty_runs"] == 5
+    assert counts["invoices"] == 75  # 15 orgs x 5 periods
+
+    token = mint_token(TokenClaims(sub="seed-check", org_id=HQ_ORG_ID, role="hq_admin"), settings)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    runs = await client.get("/api/v1/royalty/runs", headers=headers)
+    assert {r["period"] for r in runs.json()} == {p.isoformat() for p in PERIODS[:-1]}
+
+    invoices = await client.get("/api/v1/royalty/invoices", headers=headers)
+    paid = sum(1 for r in invoices.json() if r["status"] == "paid")
+    overdue = sum(1 for r in invoices.json() if r["status"] == "overdue")
+    # Deterministic payment pattern: 15+15+13+9+4 paid; the rest are past due
+    # and derive 'overdue' at read time.
+    assert paid == 56
+    assert overdue == 19
+
+    aging = (await client.get("/api/v1/royalty/invoices/aging", headers=headers)).json()
+    populated = {b["bucket"] for b in aging["buckets"] if b["invoice_count"] > 0}
+    assert {"31-60", "61-90", "90+"} <= populated
+
+
 def test_seed_world_is_synthetic_only() -> None:
     """Guardrail: no seed row can carry PHI — patient refs are opaque synthetics."""
     world = build_world()

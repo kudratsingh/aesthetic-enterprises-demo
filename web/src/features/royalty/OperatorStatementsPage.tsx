@@ -95,6 +95,14 @@ export function OperatorStatementsPage() {
 
       <section>
         <h2>Invoices</h2>
+        {invoices.isPending && <p className="hint">loading…</p>}
+        {invoices.isSuccess &&
+          invoices.data.filter((i) => i.superseded_by === null).length ===
+            0 && (
+            <p className="hint">
+              No invoices yet — HQ hasn't issued this period.
+            </p>
+          )}
         <table className="tbl">
           <thead>
             <tr>

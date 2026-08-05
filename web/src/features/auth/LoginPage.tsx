@@ -52,7 +52,29 @@ export function LoginPage() {
             Sign in
           </button>
           {error && <p className="bad">invalid email or password</p>}
-          <p className="hint">Demo logins: docs/runbooks/local-dev.md</p>
+          <div className="row-form">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('hq_admin@clinic-network-os.demo')
+                setPassword('demo-hq-2026!')
+              }}
+            >
+              Fill HQ demo login
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('operator-1@clinic-network-os.demo')
+                setPassword('demo-operator-2026!')
+              }}
+            >
+              Fill operator demo login
+            </button>
+          </div>
+          <p className="hint">
+            Synthetic demo credentials — all data in this system is fabricated.
+          </p>
         </form>
       </section>
     </main>

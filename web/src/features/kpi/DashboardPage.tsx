@@ -22,6 +22,7 @@ export function DashboardPage() {
         />
       </div>
 
+      {network.isPending && <p className="hint">loading network KPIs…</p>}
       {latest && (
         <div className="stat-row">
           <div className="stat">
