@@ -25,3 +25,6 @@ api/openapi.json
 .DS_Store
 .idea/
 .vscode/
+
+# Claude worktrees (parallel agents)
+.claude/worktrees/
