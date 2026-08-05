@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     jwt_secret: str = "dev-only-secret-change-me-not-for-production"
     jwt_algorithm: str = "HS256"
     jwt_ttl_seconds: int = 3600
+    # HMAC shared secret for /webhooks/ghl (ADR-0005). None → endpoint answers 503.
+    ghl_webhook_secret: str | None = None
     cors_origins: list[str] = ["http://localhost:5173"]
     # Period boundaries are computed in this zone (no DST); storage is UTC. See PROJECT_CONTEXT §3.
     network_timezone: str = "America/Phoenix"
